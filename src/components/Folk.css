@@ -1,0 +1,171 @@
+/* Hanging petal band */
+.petal-band {
+  display: block;
+  width: 100%;
+  height: 34px;
+  overflow: visible;
+}
+.petal {
+  animation: petal-sway 3.4s ease-in-out infinite alternate;
+}
+@keyframes petal-sway {
+  from { transform: rotate(-5deg); }
+  to { transform: rotate(5deg); }
+}
+
+.vine-strip,
+.alpana {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Folk dhak and dhunuchi icons */
+.folk-dhak,
+.folk-dhunuchi {
+  overflow: visible;
+  flex-shrink: 0;
+}
+.folk-dhak-stick {
+  transform-origin: 62px 8px;
+  animation: folk-beat 1.2s ease-in infinite;
+}
+@keyframes folk-beat {
+  0%, 60%, 100% { transform: rotate(-22deg); }
+  14%, 32%, 47% { transform: rotate(0deg); }
+  24% { transform: rotate(-14deg); }
+  40% { transform: rotate(-12deg); }
+}
+.folk-smoke path {
+  opacity: 0;
+  animation: folk-smoke 3s ease-out infinite;
+}
+.folk-smoke path:nth-child(2) {
+  animation-delay: 1.5s;
+}
+@keyframes folk-smoke {
+  0% { opacity: 0; transform: translateY(6px); }
+  25% { opacity: 0.9; }
+  100% { opacity: 0; transform: translateY(-14px); }
+}
+.folk-flame {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: folk-flicker 0.5s ease-in-out infinite alternate;
+}
+@keyframes folk-flicker {
+  from { transform: scale(0.85, 0.8); }
+  to { transform: scale(1.05, 1.15); }
+}
+
+/* Launch curtain: painted vermilion cloth */
+.curtain-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0 2px, transparent 2px 5px),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.04) 0 2px, transparent 2px 6px),
+    var(--vermilion);
+  border-bottom: 3px solid #1a1210;
+}
+.curtain-intro.rising {
+  pointer-events: none;
+  animation: curtain-rise 1.9s cubic-bezier(0.6, 0, 0.3, 1) forwards;
+}
+@keyframes curtain-rise {
+  0% { transform: translateY(0); }
+  10% { transform: translateY(14px); }
+  100% { transform: translateY(calc(-100% - 60px)); }
+}
+.curtain-vine {
+  position: absolute;
+  border: 3px solid #1a1210;
+  box-sizing: border-box;
+}
+.curtain-vine.top {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+}
+.curtain-vine.left,
+.curtain-vine.right {
+  top: 27px;
+  width: 30px;
+  height: calc(100% - 27px);
+}
+.curtain-vine.left {
+  left: 0;
+}
+.curtain-vine.right {
+  right: 0;
+}
+.curtain-petals {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: -3px;
+}
+.curtain-welcome {
+  text-align: center;
+  padding: 0 40px;
+  animation: welcome-in 0.9s ease-out both;
+}
+.curtain-welcome p {
+  margin: 0;
+}
+.maa-eyes {
+  width: min(260px, 60vw);
+  margin-bottom: 18px;
+}
+.curtain-bn {
+  font-family: 'Tiro Bangla', Georgia, serif;
+  font-size: clamp(2.6rem, 8vw, 5rem);
+  line-height: 1.2;
+  color: #f7bd2e;
+  -webkit-text-stroke: 2px #1a1210;
+  paint-order: stroke fill;
+  text-shadow: 4px 4px 0 #1a1210;
+}
+/* The Uma logo on a cream medallion, so the maroon lettering reads on the vermilion cloth */
+.curtain-medallion {
+  width: min(380px, 76vw);
+  margin: 10px auto 0;
+  padding: 8px 30px;
+  box-sizing: border-box;
+  background: #f8e9cc;
+  border: 3px solid #1a1210;
+  border-radius: 999px;
+  box-shadow: 5px 5px 0 #1a1210;
+}
+.curtain-medallion img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.curtain-hint {
+  margin-top: 18px !important;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #1a1210;
+}
+@keyframes welcome-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .petal,
+  .folk-dhak *,
+  .folk-dhunuchi * {
+    animation: none !important;
+  }
+  .folk-smoke path {
+    opacity: 0.8;
+  }
+}

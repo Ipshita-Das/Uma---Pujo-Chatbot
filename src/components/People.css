@@ -1,0 +1,105 @@
+.person {
+  overflow: visible;
+}
+
+/* Dhaki: arms strike "dhak... kur-kur", the body bobs on each beat */
+.dhaki .ppl-arm-b {
+  animation: dhaki-strike 1.2s ease-in infinite;
+  animation-delay: var(--d, 0s);
+}
+.dhaki .ppl-arm-a {
+  animation: dhaki-tap 1.2s ease-in infinite;
+  animation-delay: var(--d, 0s);
+}
+.dhaki .ppl-bob {
+  animation: dhaki-bob 1.2s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+.dhaki .ppl-plume {
+  transform-origin: 28px 104px;
+  animation: plume-bounce 1.2s ease-in-out infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes dhaki-strike {
+  0%, 60%, 100% { transform: rotate(-20deg); }
+  14% { transform: rotate(3deg); }
+  24% { transform: rotate(-12deg); }
+  32% { transform: rotate(3deg); }
+  40% { transform: rotate(-10deg); }
+  47% { transform: rotate(3deg); }
+}
+@keyframes dhaki-tap {
+  0%, 20%, 100% { transform: rotate(0deg); }
+  28%, 44% { transform: rotate(-9deg); }
+  36%, 52% { transform: rotate(1deg); }
+}
+@keyframes dhaki-bob {
+  0%, 30%, 60%, 100% { transform: translateY(0); }
+  15%, 45% { transform: translateY(1.8px); }
+}
+@keyframes plume-bounce {
+  0%, 100% { transform: rotate(-3deg); }
+  15%, 45% { transform: rotate(4deg); }
+  30% { transform: rotate(-1deg); }
+}
+
+/* Dhunuchi naach: the body sways, arms rise and dip in turn */
+.dancer .ppl-sway {
+  transform-origin: 60px 194px;
+  animation: dancer-sway 2.4s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+}
+.dancer .ppl-arm-a {
+  animation: dancer-arm-a 1.2s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+}
+.dancer .ppl-arm-b {
+  animation: dancer-arm-b 1.2s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+}
+@keyframes dancer-sway {
+  from { transform: rotate(-6deg); }
+  to { transform: rotate(6deg); }
+}
+@keyframes dancer-arm-a {
+  from { transform: rotate(10deg); }
+  to { transform: rotate(-14deg); }
+}
+@keyframes dancer-arm-b {
+  from { transform: rotate(-12deg); }
+  to { transform: rotate(10deg); }
+}
+
+.ppl-smoke path {
+  stroke: #6f6474;
+  stroke-width: 2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ppl-smoke 3s ease-out infinite;
+}
+.ppl-smoke path:nth-child(2) { animation-delay: 1s; }
+.ppl-smoke path:nth-child(3) { animation-delay: 2s; }
+@keyframes ppl-smoke {
+  0% { opacity: 0; transform: translateY(6px) scale(0.6); }
+  25% { opacity: 0.7; }
+  100% { opacity: 0; transform: translateY(-24px) scale(1.4); }
+}
+.ppl-flame {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: ppl-flicker 0.45s ease-in-out infinite alternate;
+}
+@keyframes ppl-flicker {
+  from { transform: scale(0.8, 0.75); }
+  to { transform: scale(1.1, 1.2); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .person * {
+    animation: none !important;
+  }
+  .ppl-smoke path {
+    opacity: 0.4;
+  }
+}

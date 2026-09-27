@@ -1,0 +1,10 @@
+// Folk-painting palette shared by all the Jamini Roy style artwork.
+export const INK = '#1a1210'
+export const OCHRE = '#f2a81d'
+export const VERMILION = '#e2401c'
+export const RED = '#c9241a'
+export const PINK = '#ee6fa0'
+export const YELLOW = '#f7bd2e'
+export const BLUE = '#2f62c0'
+export const TEAL = '#13806a'
+export const CREAM = '#fff6e6'

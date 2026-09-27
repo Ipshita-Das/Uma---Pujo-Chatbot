@@ -1,0 +1,60 @@
+:root {
+  --ink: #1a1210;
+  --red: #e2401c; /* vermilion */
+  --red-deep: #c9241a;
+  --yellow: #f7bd2e;
+  --pink: #ee6fa0;
+  --teal: #13806a;
+  --blue: #2f62c0;
+  --paper: #f8e9cc;
+  --paper-2: #f1dcb4;
+  --surface: #fffaf0;
+  --text: #3d2a20;
+  --text-h: #1a1210;
+  --on-red: #fff6e6;
+  --border: #1a1210;
+
+  --serif: 'Tiro Bangla', Georgia, serif;
+  font: 16px/1.55 system-ui, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: light;
+  color: var(--text);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+/* Thin vermilion scrollbars (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--red);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--red-deep);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox, which doesn't support the rules above */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--red) transparent;
+  }
+}
