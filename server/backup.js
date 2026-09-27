@@ -1,12 +1,13 @@
 import { mkdirSync, readdirSync, rmSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import { backup, DatabaseSync } from 'node:sqlite'
+import { DatabaseSync } from 'node:sqlite'
 import { fileURLToPath } from 'node:url'
 
 export const BACKUP_DIR = process.env.BACKUP_DIR || fileURLToPath(new URL('./backups/', import.meta.url))
 const KEEP = Number(process.env.BACKUP_KEEP) || 14
 const DAY_MS = 24 * 60 * 60 * 1000
 const PREFIX = 'pujo-'
+const TABLES = ['users', 'sessions', 'chats', 'messages']
 
 // Local time, e.g. pujo-2026-09-27-23-01-46.db
 const stamp = () => {
@@ -23,21 +24,42 @@ function listBackups() {
     .sort((a, b) => b.time - a.time)
 }
 
-// Copies the live database into a new timestamped file, then deletes the oldest backups
-// beyond BACKUP_KEEP. Uses SQLite's online backup, so it is safe while the server is running.
+// Copies every table from `source` (a libsql client: local file or Turso) into `target` (a node:sqlite database).
+async function copyTables(source, target) {
+  const schema = await source.execute(
+    "SELECT sql FROM sqlite_master WHERE sql IS NOT NULL AND name NOT LIKE 'sqlite_%' ORDER BY type DESC",
+  )
+  for (const row of schema.rows) target.exec(row[0]) // tables first, then indexes
+  for (const table of TABLES) {
+    const { columns, rows } = await source.execute(`SELECT * FROM ${table}`)
+    if (!rows.length) continue
+    const insert = target.prepare(`INSERT INTO ${table} (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')})`)
+    target.exec('BEGIN')
+    for (const row of rows) insert.run(...columns.map((_, i) => row[i]))
+    target.exec('COMMIT')
+  }
+}
+
+// Downloads the whole database into a new timestamped file in BACKUP_DIR, then deletes the oldest
+// backups beyond BACKUP_KEEP. Works the same whether the data lives in Turso or a local file.
 export async function backupDatabase(db) {
   mkdirSync(BACKUP_DIR, { recursive: true })
   const file = join(BACKUP_DIR, `${PREFIX}${stamp()}.db`)
-  await backup(db, file)
-  // Make the copy a single self-contained file (no -wal/-shm companions), easy to move or open.
-  const copy = new DatabaseSync(file)
-  copy.exec('PRAGMA journal_mode = DELETE')
-  copy.close()
+  const target = new DatabaseSync(file)
+  try {
+    await copyTables(db, target)
+    target.close()
+  } catch (err) {
+    target.close()
+    rmSync(file, { force: true })
+    throw err
+  }
   for (const old of listBackups().slice(KEEP)) rmSync(old.file)
   return file
 }
 
 // Backs up now if the newest backup is more than a day old, then once every day.
+// Only used with a local database file; on a free host the disk is wiped, so use `npm run backup` instead.
 export function scheduleDailyBackups(db) {
   const run = () =>
     backupDatabase(db)

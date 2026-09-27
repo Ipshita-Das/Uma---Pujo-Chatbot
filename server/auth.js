@@ -21,23 +21,23 @@ function readCookie(req, name) {
 
 // Creates a session and returns the Set-Cookie header value. Only a hash of the token is stored.
 // With `remember`, the cookie lasts 30 days; without it, it is a browser-session cookie.
-export function startSession(userId, remember) {
+export async function startSession(userId, remember) {
   const token = randomBytes(32).toString('base64url')
   const lifetime = remember ? REMEMBER_DAYS * 24 * 60 * 60 : SHORT_SESSION_HOURS * 60 * 60
-  createSession(sha256(token), userId, Date.now() + lifetime * 1000)
+  await createSession(sha256(token), userId, Date.now() + lifetime * 1000)
   const maxAge = remember ? `; Max-Age=${lifetime}` : ''
   return `${COOKIE}=${token}; HttpOnly; SameSite=Lax; Path=/${maxAge}${SECURE}`
 }
 
-export function endSession(req) {
+export async function endSession(req) {
   const token = readCookie(req, COOKIE)
-  if (token) deleteSession(sha256(token))
+  if (token) await deleteSession(sha256(token))
   return `${COOKIE}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0${SECURE}`
 }
 
-export function currentUser(req) {
+export async function currentUser(req) {
   const token = readCookie(req, COOKIE)
-  return token ? findUserBySession(sha256(token)) ?? null : null
+  return token ? ((await findUserBySession(sha256(token))) ?? null) : null
 }
 
 // ---- Rate limiting ----

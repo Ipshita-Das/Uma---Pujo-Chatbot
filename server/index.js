@@ -1,7 +1,10 @@
+import { createReadStream, existsSync, statSync } from 'node:fs'
 import { createServer } from 'node:http'
+import { extname, join, normalize } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { scheduleDailyBackups } from './backup.js'
 import { currentUser, endSession, startSession, tooManyAttempts } from './auth.js'
-import { db, deleteChat, getChat, getMessages, listChats, renameChat, saveExchange, signInGoogleUser } from './db.js'
+import { db, deleteChat, describeDatabase, isLocal, getChat, getMessages, listChats, renameChat, saveExchange, signInGoogleUser } from './db.js'
 import { GOOGLE_CLIENT_ID, GoogleAuthError, verifyGoogleIdToken } from './google.js'
 import { askModel, describeProviders, hasApiKey, LlmError } from './llm.js'
 
@@ -9,6 +12,18 @@ const PORT = process.env.PORT || 3001
 const MAX_BODY_BYTES = 15 * 1024 * 1024 // photos arrive as base64 data URLs
 const MAX_TEXT = 2000
 const MAX_IMAGE_CHARS = 6 * 1024 * 1024
+const DIST = fileURLToPath(new URL('../dist/', import.meta.url))
+const TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.json': 'application/json',
+  '.woff2': 'font/woff2',
+}
 
 class HttpError extends Error {
   constructor(status, message) {
@@ -51,8 +66,8 @@ const clientIp = (req) =>
   (process.env.TRUST_PROXY === '1' && String(req.headers['x-forwarded-for'] ?? '').split(',')[0].trim()) ||
   req.socket.remoteAddress
 
-function requireUser(req) {
-  const user = currentUser(req)
+async function requireUser(req) {
+  const user = await currentUser(req)
   if (!user) throw new HttpError(401, 'Please log in')
   return user
 }
@@ -81,50 +96,50 @@ async function googleSignIn(req, res) {
     if (err instanceof GoogleAuthError) throw new HttpError(401, err.message)
     throw err
   }
-  const user = signInGoogleUser(profile)
-  send(res, 200, { user: publicUser(user) }, { 'Set-Cookie': startSession(user.id, remember !== false) })
+  const user = await signInGoogleUser(profile)
+  send(res, 200, { user: publicUser(user) }, { 'Set-Cookie': await startSession(user.id, remember !== false) })
 }
 
-function logout(req, res) {
-  send(res, 200, { ok: true }, { 'Set-Cookie': endSession(req) })
+async function logout(req, res) {
+  send(res, 200, { ok: true }, { 'Set-Cookie': await endSession(req) })
 }
 
-function me(req, res) {
-  send(res, 200, { user: publicUser(requireUser(req)) })
+async function me(req, res) {
+  send(res, 200, { user: publicUser(await requireUser(req)) })
 }
 
 // ---- Chats ----
 
-function chats(req, res) {
-  const user = requireUser(req)
-  send(res, 200, { chats: listChats(user.id) })
+async function chats(req, res) {
+  const user = await requireUser(req)
+  send(res, 200, { chats: await listChats(user.id) })
 }
 
-function chat(req, res, id) {
-  const user = requireUser(req)
-  const found = getChat(id, user.id)
+async function chat(req, res, id) {
+  const user = await requireUser(req)
+  const found = await getChat(id, user.id)
   if (!found) throw new HttpError(404, 'Chat not found')
-  send(res, 200, { chat: found, messages: getMessages(id) })
+  send(res, 200, { chat: found, messages: await getMessages(id) })
 }
 
 async function rename(req, res, id) {
-  const user = requireUser(req)
+  const user = await requireUser(req)
   const { title = '' } = await readJson(req)
   const clean = String(title).trim().slice(0, 60)
   if (!clean) throw new HttpError(400, 'Title cannot be empty')
-  if (!renameChat(id, user.id, clean)) throw new HttpError(404, 'Chat not found')
+  if (!(await renameChat(id, user.id, clean))) throw new HttpError(404, 'Chat not found')
   send(res, 200, { ok: true })
 }
 
-function remove(req, res, id) {
-  const user = requireUser(req)
-  if (!deleteChat(id, user.id)) throw new HttpError(404, 'Chat not found')
+async function remove(req, res, id) {
+  const user = await requireUser(req)
+  if (!(await deleteChat(id, user.id))) throw new HttpError(404, 'Chat not found')
   send(res, 200, { ok: true })
 }
 
 // Sends a message: the history comes from the database, never from the browser.
 async function message(req, res) {
-  const user = requireUser(req)
+  const user = await requireUser(req)
   const { chatId = null, text = '', image = null } = await readJson(req)
 
   const cleanText = String(text).trim().slice(0, MAX_TEXT)
@@ -135,8 +150,8 @@ async function message(req, res) {
 
   let history = []
   if (chatId) {
-    if (!getChat(Number(chatId), user.id)) throw new HttpError(404, 'Chat not found')
-    history = getMessages(Number(chatId))
+    if (!(await getChat(Number(chatId), user.id))) throw new HttpError(404, 'Chat not found')
+    history = await getMessages(Number(chatId))
   }
 
   let reply
@@ -147,7 +162,7 @@ async function message(req, res) {
     throw err
   }
 
-  const saved = saveExchange({
+  const saved = await saveExchange({
     userId: user.id,
     chatId: chatId ? Number(chatId) : null,
     title: chatTitle(userText),
@@ -155,15 +170,36 @@ async function message(req, res) {
     reply,
   })
   send(res, 200, {
-    chat: getChat(saved.chatId, user.id),
+    chat: await getChat(saved.chatId, user.id),
     userMessage: { id: saved.userMessageId, role: 'user', text: userText, had_photo: Boolean(cleanImage), off_topic: reply.offTopic },
     reply: { id: saved.replyId, role: 'assistant', text: reply.text, had_photo: false, off_topic: reply.offTopic },
   })
 }
 
+// ---- Website ----
+
+// Serves the built website from dist/ (made by `npm run build`). Unknown paths get index.html.
+function serveSite(req, res, path) {
+  let file = normalize(join(DIST, decodeURIComponent(path)))
+  if (!file.startsWith(DIST) || !existsSync(file) || statSync(file).isDirectory()) file = join(DIST, 'index.html')
+  if (!existsSync(file)) {
+    res.writeHead(404, { 'Content-Type': 'text/plain' })
+    return res.end('The website has not been built. Run `npm run build` first.')
+  }
+  const hashed = file.includes(`${join(DIST, 'assets')}`)
+  res.writeHead(200, {
+    'Content-Type': TYPES[extname(file)] ?? 'application/octet-stream',
+    'Cache-Control': hashed ? 'public, max-age=31536000, immutable' : 'no-cache',
+    'X-Content-Type-Options': 'nosniff',
+  })
+  if (req.method === 'HEAD') return res.end()
+  createReadStream(file).pipe(res)
+}
+
 // ---- Router ----
 
 const routes = [
+  ['GET', /^\/api\/health$/, (req, res) => send(res, 200, { ok: true })],
   ['GET', /^\/api\/config$/, config],
   ['POST', /^\/api\/auth\/google$/, googleSignIn],
   ['POST', /^\/api\/auth\/logout$/, logout],
@@ -178,6 +214,10 @@ const routes = [
 createServer(async (req, res) => {
   try {
     const path = new URL(req.url, 'http://localhost').pathname
+    if (!path.startsWith('/api/')) {
+      if (req.method === 'GET' || req.method === 'HEAD') return serveSite(req, res, path)
+      throw new HttpError(404, 'Not found')
+    }
     // Browsers can't send JSON cross-site without a preflight, so requiring it blocks CSRF form posts.
     if (req.method !== 'GET' && req.method !== 'DELETE' && !String(req.headers['content-type']).startsWith('application/json')) {
       throw new HttpError(415, 'Expected JSON')
@@ -194,8 +234,9 @@ createServer(async (req, res) => {
   }
 }).listen(PORT, () => {
   console.log(`Uma API on http://localhost:${PORT}`)
+  console.log(`Database: ${describeDatabase()}`)
   console.log(`AI providers: ${describeProviders()}`)
   if (!hasApiKey) console.warn('Warning: no GROQ_API_KEY or GEMINI_API_KEY is set, so chat replies will fail. Add one to .env.')
-  scheduleDailyBackups(db)
+  if (isLocal) scheduleDailyBackups(db)
   if (!GOOGLE_CLIENT_ID) console.warn('Warning: GOOGLE_CLIENT_ID is not set, so nobody can sign in. See the README.')
 })
