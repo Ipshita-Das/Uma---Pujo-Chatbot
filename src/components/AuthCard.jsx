@@ -136,6 +136,9 @@ export function AuthCard({ onAuthed }) {
           </label>
 
           {error && <p className="auth-error">{error}</p>}
+          <p className="auth-legal">
+            By continuing you agree to how Uma handles your data, described in the <a href="/privacy.html">privacy policy</a>.
+          </p>
         </div>
       </div>
     </div>

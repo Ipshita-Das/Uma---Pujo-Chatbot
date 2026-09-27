@@ -119,6 +119,16 @@
   font-weight: 400;
   color: var(--text);
 }
+.auth-legal {
+  margin: 14px 0 0;
+  font-size: 0.75rem;
+  color: var(--text);
+  opacity: 0.8;
+}
+.auth-legal a,
+.disclaimer a {
+  color: inherit;
+}
 .auth-error {
   margin: 12px 0 0;
   padding: 8px 12px;

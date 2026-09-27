@@ -181,6 +181,7 @@ async function message(req, res) {
 // Serves the built website from dist/ (made by `npm run build`). Unknown paths get index.html.
 function serveSite(req, res, path) {
   let file = normalize(join(DIST, decodeURIComponent(path)))
+  if (file.startsWith(DIST) && !extname(file) && existsSync(`${file}.html`)) file = `${file}.html` // /privacy → privacy.html
   if (!file.startsWith(DIST) || !existsSync(file) || statSync(file).isDirectory()) file = join(DIST, 'index.html')
   if (!existsSync(file)) {
     res.writeHead(404, { 'Content-Type': 'text/plain' })
