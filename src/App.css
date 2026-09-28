@@ -354,7 +354,8 @@
   animation: msg-in 0.25s ease-out;
   overflow-wrap: anywhere;
 }
-.msg p {
+/* Plain-text messages (the user's); Uma's formatted replies are styled in Reply.css */
+.msg > p {
   margin: 0;
   white-space: pre-wrap;
 }

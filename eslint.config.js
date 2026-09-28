@@ -17,6 +17,10 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
+    rules: {
+      // Allows `const { unwanted, ...rest } = props` to drop a prop.
+      'no-unused-vars': ['error', { ignoreRestSiblings: true }],
+    },
   },
   {
     files: ['server/**/*.js'],

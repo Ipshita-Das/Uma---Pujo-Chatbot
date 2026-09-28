@@ -6,6 +6,7 @@ import { AlpanaFloor, CurtainIntro, FolkDhak, FolkDhunuchi, PetalBand } from './
 import { Garlands, KolaBou, ShankhaWoman } from './components/Extras.jsx'
 import { Painting } from './components/Painting.jsx'
 import { Dhaki, DhunuchiDancer } from './components/People.jsx'
+import { Reply } from './components/Reply.jsx'
 import { Sidebar } from './components/Sidebar.jsx'
 
 const SUGGESTIONS = [
@@ -327,7 +328,7 @@ function App() {
                 <div key={m.id} className={`msg ${m.role}`}>
                   {m.image && <img src={m.image} alt="Uploaded" />}
                   {!m.image && m.had_photo && <span className="photo-gone">📷 Photo not saved</span>}
-                  <p>{m.text}</p>
+                  {m.role === 'assistant' ? <Reply text={m.text} /> : <p>{m.text}</p>}
                 </div>
               ))}
               {loading && (
