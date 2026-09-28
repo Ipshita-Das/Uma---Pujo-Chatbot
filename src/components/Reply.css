@@ -54,6 +54,35 @@
   color: var(--teal);
 }
 
+/* Google Maps links: a pill button that opens the route in Google Maps */
+.reply .map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  margin: 4px 0;
+  padding: 7px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--teal);
+  color: #fff6e6;
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.3;
+  text-decoration: none;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.reply .map-link:hover {
+  filter: brightness(1.08);
+}
+.reply .map-link:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.map-link-icon {
+  flex-shrink: 0;
+}
+
 /* Tables: bordered like the rest of the app, scroll sideways if too wide */
 .reply-table {
   max-width: 100%;
