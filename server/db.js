@@ -88,7 +88,14 @@ async function migrate() {
   await run('DELETE FROM sessions WHERE expires_at < ?', [Date.now()])
 }
 
-await migrate()
+try {
+  await migrate()
+} catch (err) {
+  console.error(`
+Could not open the database: ${describeDatabase()}`)
+  console.error(isLocal ? err.message : `Check TURSO_DATABASE_URL and TURSO_AUTH_TOKEN. (${err.message})`)
+  process.exit(1)
+}
 
 // Finds the user for this Google account, creating them on first sign-in, and refreshes their
 // name, email and photo from Google. Accounts made before Google sign-in are matched by email.

@@ -176,6 +176,19 @@ async function message(req, res) {
   })
 }
 
+// ---- Health check ----
+
+// For uptime monitors: a tiny database read keeps both the server and the database active.
+async function health(req, res) {
+  try {
+    await db.execute('SELECT 1')
+    send(res, 200, { ok: true })
+  } catch (err) {
+    console.error('Health check: database unreachable', err.message)
+    send(res, 503, { ok: false, error: 'Database unreachable' })
+  }
+}
+
 // ---- Website ----
 
 // Serves the built website from dist/ (made by `npm run build`). Unknown paths get index.html.
@@ -200,7 +213,7 @@ function serveSite(req, res, path) {
 // ---- Router ----
 
 const routes = [
-  ['GET', /^\/api\/health$/, (req, res) => send(res, 200, { ok: true })],
+  ['GET', /^\/api\/health$/, health],
   ['GET', /^\/api\/config$/, config],
   ['POST', /^\/api\/auth\/google$/, googleSignIn],
   ['POST', /^\/api\/auth\/logout$/, logout],
