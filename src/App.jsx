@@ -386,7 +386,7 @@ function App() {
             </div>
             <p className="disclaimer">
               Uma is an AI and can make mistakes.<span className="disclaimer-more"> Please double-check important details like timings.</span>{' '}
-              <a href="/privacy.html">Privacy</a>
+              <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a>
             </p>
           </div>
         </form>
