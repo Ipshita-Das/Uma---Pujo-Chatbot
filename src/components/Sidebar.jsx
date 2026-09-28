@@ -13,7 +13,7 @@ function when(ms) {
 }
 
 // Slide-in drawer with the user's saved chats, a new-chat button and log out.
-export function Sidebar({ open, onClose, user, chats, activeChatId, onNewChat, onOpenChat, onRenameChat, onDeleteChat, onLogout }) {
+export function Sidebar({ open, onClose, user, chats, activeChatId, onNewChat, onOpenChat, onRenameChat, onDeleteChat, onLogout, onMakeCard }) {
   useEffect(() => {
     if (!open) return
     const onKey = (e) => e.key === 'Escape' && onClose()
@@ -34,6 +34,9 @@ export function Sidebar({ open, onClose, user, chats, activeChatId, onNewChat, o
 
         <button type="button" className="drawer-new" onClick={onNewChat}>
           <span aria-hidden="true">＋</span> New chat
+        </button>
+        <button type="button" className="drawer-card" onClick={onMakeCard}>
+          <span aria-hidden="true">💌</span> Sharodiya card
         </button>
 
         <nav className="drawer-list">

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import { api } from './api.js'
 import { AuthCard } from './components/AuthCard.jsx'
+import { CardMaker } from './components/CardMaker.jsx'
 import { AlpanaFloor, CurtainIntro, FolkDhak, FolkDhunuchi, PetalBand } from './components/Folk.jsx'
 import { Garlands, KolaBou, ShankhaWoman } from './components/Extras.jsx'
 import { Painting } from './components/Painting.jsx'
@@ -78,6 +79,7 @@ function App() {
   const [activeChatId, setActiveChatId] = useState(null)
   const [messages, setMessages] = useState([])
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [cardOpen, setCardOpen] = useState(false)
   const [chatLoading, setChatLoading] = useState(false)
   const [input, setInput] = useState('')
   const [image, setImage] = useState(null)
@@ -282,8 +284,13 @@ function App() {
           onRenameChat={renameChat}
           onDeleteChat={deleteChat}
           onLogout={logout}
+          onMakeCard={() => {
+            setDrawerOpen(false)
+            setCardOpen(true)
+          }}
         />
       )}
+      {user && <CardMaker open={cardOpen} onClose={() => setCardOpen(false)} fromName={firstName} />}
       {user === null && curtain !== 'closed' && <AuthCard onAuthed={setUser} />}
 
       <div className="stage">
@@ -302,6 +309,11 @@ function App() {
                   {firstName && <span className="greet-name">, {firstName}!</span>}
                 </p>
                 <p className="tagline">Ask me about pandals, adda spots and bhog, or upload a photo for outfit ideas.</p>
+                {user && (
+                  <button type="button" className="card-entry" onClick={() => setCardOpen(true)}>
+                    <span aria-hidden="true">💌</span> Make a Sharodiya card
+                  </button>
+                )}
               </div>
               {user && (
                 <div className="suggestions">

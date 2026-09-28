@@ -84,6 +84,25 @@
   transform: translate(2px, 2px);
   box-shadow: 1px 1px 0 var(--ink);
 }
+.drawer-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px;
+  margin: -4px 0 14px;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--yellow);
+  color: var(--ink);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--ink);
+}
+.drawer-card:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--ink);
+}
 .drawer-list {
   flex: 1;
   min-height: 0;
