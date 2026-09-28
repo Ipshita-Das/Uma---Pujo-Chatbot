@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { VineStrip } from './Folk.jsx'
+import { CardIcon, CloseIcon, PencilIcon, PlusIcon, TrashIcon } from './Icons.jsx'
 import './Sidebar.css'
 
 function when(ms) {
@@ -28,15 +29,15 @@ export function Sidebar({ open, onClose, user, chats, activeChatId, onNewChat, o
         <div className="drawer-head">
           <h2>Your chats</h2>
           <button type="button" className="drawer-close" onClick={onClose} aria-label="Close menu">
-            ×
+            <CloseIcon size={16} />
           </button>
         </div>
 
         <button type="button" className="drawer-new" onClick={onNewChat}>
-          <span aria-hidden="true">＋</span> New chat
+          <PlusIcon size={18} /> New chat
         </button>
         <button type="button" className="drawer-card" onClick={onMakeCard}>
-          <span aria-hidden="true">💌</span> Sharodiya card
+          <CardIcon size={18} /> Sharodiya card
         </button>
 
         <nav className="drawer-list">
@@ -48,10 +49,10 @@ export function Sidebar({ open, onClose, user, chats, activeChatId, onNewChat, o
                 <span className="drawer-when">{when(c.updated_at)}</span>
               </button>
               <button type="button" className="drawer-icon" onClick={() => onRenameChat(c)} aria-label={`Rename "${c.title}"`} title="Rename">
-                ✎
+                <PencilIcon size={16} />
               </button>
               <button type="button" className="drawer-icon" onClick={() => onDeleteChat(c)} aria-label={`Delete "${c.title}"`} title="Delete">
-                🗑
+                <TrashIcon size={16} />
               </button>
             </div>
           ))}

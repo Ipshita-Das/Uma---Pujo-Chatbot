@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Painting } from './Painting.jsx'
 import { VineStrip } from './Folk.jsx'
+import { CloseIcon } from './Icons.jsx'
 import { CREAM, INK, RED, TEAL, YELLOW } from './palette.js'
 import './CardMaker.css'
 
@@ -226,7 +227,7 @@ export function CardMaker({ open, onClose, fromName = '' }) {
       <div className="card-dialog" role="dialog" aria-modal="true" aria-labelledby="card-title">
         <VineStrip className="card-vine" />
         <button type="button" className="card-close" onClick={onClose} aria-label="Close">
-          ×
+          <CloseIcon size={16} />
         </button>
         <div className="card-body">
           <div className="card-form">

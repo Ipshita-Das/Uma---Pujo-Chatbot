@@ -1,5 +1,6 @@
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { MapPinIcon } from './Icons.jsx'
 import './Reply.css'
 
 // Google Maps URLs (no API key needed): https://developers.google.com/maps/documentation/urls/get-started
@@ -19,9 +20,7 @@ const components = {
   a: ({ node, href, children, ...props }) =>
     isMapsLink(href) ? (
       <a {...props} href={href} className="map-link" target="_blank" rel="noopener noreferrer">
-        <span className="map-link-icon" aria-hidden="true">
-          🗺️
-        </span>
+        <MapPinIcon size={18} className="map-link-icon" />
         <span>{typeof children === 'string' ? children.replace(/\+/g, ' ') : children}</span>
       </a>
     ) : (

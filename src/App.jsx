@@ -7,15 +7,16 @@ import { AlpanaFloor, CurtainIntro, FolkDhak, FolkDhunuchi, PetalBand } from './
 import { Garlands, KolaBou, ShankhaWoman } from './components/Extras.jsx'
 import { Painting } from './components/Painting.jsx'
 import { Dhaki, DhunuchiDancer } from './components/People.jsx'
+import { CameraIcon, CardIcon, ChaIcon, CloseIcon, FoodIcon, PandalIcon, SareeIcon } from './components/Icons.jsx'
 import { Reply } from './components/Reply.jsx'
 import { Sidebar } from './components/Sidebar.jsx'
 import { ThinkingLine } from './components/ThinkingLine.jsx'
 
 const SUGGESTIONS = [
-  { icon: '☕', text: 'Best places for pujor adda in South Kolkata?' },
-  { icon: '🛕', text: 'Plan a North Kolkata pandal-hopping route for Saptami' },
-  { icon: '🥻', text: 'What should I wear for Ashtami anjali?' },
-  { icon: '🍢', text: 'Must-try Pujo street food near Maddox Square' },
+  { Icon: ChaIcon, text: 'Best places for pujor adda in South Kolkata?' },
+  { Icon: PandalIcon, text: 'Plan a North Kolkata pandal-hopping route for Saptami' },
+  { Icon: SareeIcon, text: 'What should I wear for Ashtami anjali?' },
+  { Icon: FoodIcon, text: 'Must-try Pujo street food near Maddox Square' },
 ]
 
 // Shrink photos before upload so requests stay small and fast.
@@ -311,15 +312,17 @@ function App() {
                 <p className="tagline">Ask me about pandals, adda spots and bhog, or upload a photo for outfit ideas.</p>
                 {user && (
                   <button type="button" className="card-entry" onClick={() => setCardOpen(true)}>
-                    <span aria-hidden="true">💌</span> Make a Sharodiya card
+                    <CardIcon size={18} /> Make a Sharodiya card
                   </button>
                 )}
               </div>
               {user && (
                 <div className="suggestions">
-                  {SUGGESTIONS.map(({ icon, text }) => (
+                  {SUGGESTIONS.map(({ Icon, text }) => (
                     <button key={text} type="button" onClick={() => send(text)}>
-                      <span className="s-icon" aria-hidden="true">{icon}</span>
+                      <span className="s-icon">
+                        <Icon size={19} />
+                      </span>
                       <span>{text}</span>
                     </button>
                   ))}
@@ -340,7 +343,11 @@ function App() {
               {messages.map((m) => (
                 <div key={m.id} className={`msg ${m.role}`}>
                   {m.image && <img src={m.image} alt="Uploaded" />}
-                  {!m.image && m.had_photo && <span className="photo-gone">📷 Photo not saved</span>}
+                  {!m.image && m.had_photo && (
+                    <span className="photo-gone">
+                      <CameraIcon size={14} /> Photo not saved
+                    </span>
+                  )}
                   {m.role === 'assistant' ? <Reply text={m.text} /> : <p>{m.text}</p>}
                 </div>
               ))}
@@ -371,7 +378,7 @@ function App() {
                 <div className="preview">
                   <img src={image} alt="Selected" />
                   <button type="button" onClick={() => setImage(null)} aria-label="Remove photo">
-                    ×
+                    <CloseIcon size={14} />
                   </button>
                 </div>
                 <p className="preview-note">Photos are only used for this reply and are never saved.</p>
@@ -385,7 +392,7 @@ function App() {
                 onClick={() => fileRef.current?.click()}
                 aria-label="Attach photo"
               >
-                📷
+                <CameraIcon size={22} />
               </button>
               <input
                 className="text"

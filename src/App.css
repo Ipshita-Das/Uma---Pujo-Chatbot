@@ -435,6 +435,22 @@
   font-size: 0.82rem;
   color: var(--text);
 }
+/* Icon buttons: centre the icon */
+.attach,
+.preview button {
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+}
+.preview button {
+  padding: 0;
+  color: var(--on-red);
+}
+.photo-gone {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 5px;
+}
 .hero-error {
   margin: 14px auto 0;
 }

@@ -103,6 +103,13 @@
   transform: translate(2px, 2px);
   box-shadow: 1px 1px 0 var(--ink);
 }
+.drawer-close,
+.drawer-icon {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--ink);
+}
 .drawer-list {
   flex: 1;
   min-height: 0;

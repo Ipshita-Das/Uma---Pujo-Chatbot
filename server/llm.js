@@ -37,7 +37,7 @@ const DEFAULT_COOLDOWN_MS = 20_000
 
 // Fixed replies used when the model flags a request as outside Durga Puja.
 const REDIRECTS = [
-  'Ami shudhu Pujo niye adda dite pari! 🪔 Pandal, bhog, outfit, ritual: kichhu jiggesh korbe?',
+  'Ami shudhu Pujo niye adda dite pari! Pandal, bhog, outfit, ritual: kichhu jiggesh korbe?',
   "Oi bishoy ta amar para-r baire, bondhu. Let's talk Pujo instead: pandal hopping plan, Ashtami outfit, or bhog?",
   "I'm all about Durga Puja, so that one's not for me. Ask me about pandals, adda spots, food or what to wear!",
 ]

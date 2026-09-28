@@ -40,6 +40,12 @@
   cursor: pointer;
   z-index: 1;
 }
+.card-close {
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: var(--ink);
+}
 .card-body {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);

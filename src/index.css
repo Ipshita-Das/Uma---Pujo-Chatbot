@@ -58,3 +58,9 @@ input {
     scrollbar-color: var(--red) transparent;
   }
 }
+
+/* Line icons (src/components/Icons.jsx) */
+.icon {
+  display: block;
+  flex-shrink: 0;
+}
