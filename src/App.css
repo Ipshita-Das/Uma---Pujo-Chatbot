@@ -388,6 +388,18 @@
   gap: 10px;
   font-style: italic;
 }
+/* Each new waiting line fades in */
+.thinking-line {
+  animation: thinking-in 0.4s ease-out;
+}
+@keyframes thinking-in {
+  from { opacity: 0; transform: translateY(3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thinking-line {
+    animation: none;
+  }
+}
 .typing-dhak {
   width: 40px;
 }

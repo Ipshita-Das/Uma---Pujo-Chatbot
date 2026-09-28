@@ -8,6 +8,7 @@ import { Painting } from './components/Painting.jsx'
 import { Dhaki, DhunuchiDancer } from './components/People.jsx'
 import { Reply } from './components/Reply.jsx'
 import { Sidebar } from './components/Sidebar.jsx'
+import { ThinkingLine } from './components/ThinkingLine.jsx'
 
 const SUGGESTIONS = [
   { icon: '☕', text: 'Best places for pujor adda in South Kolkata?' },
@@ -334,7 +335,7 @@ function App() {
               {loading && (
                 <div className="msg assistant typing">
                   <FolkDhak className="typing-dhak" />
-                  <span>Dhaker taale bhabchi…</span>
+                  <ThinkingLine />
                 </div>
               )}
               {error && <div className="error">{error}</div>}
